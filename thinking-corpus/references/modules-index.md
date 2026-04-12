@@ -49,6 +49,23 @@ Complete catalog of available thinking modules with selection criteria.
 | **Multi-agent orchestration** | state-vector + hypothesis-first + zero-hallucination + causal-chain |
 | **Creative / generative** | ockham + density-max |
 | **High-stakes decisions** | zero-hallucination + constraint-map + uncertainty-map + state-vector |
+| **Full cognitive framework (acc-thinker pattern)** | ALL modules — use Pattern B (inline) for multi-tool compatibility |
+
+---
+
+## INJECTION PATTERNS
+
+### Pattern A — File-based (standard)
+Target skill loads modules via `references/` directory. Works in Claude.ai skills system.
+Activation via `## THINKING MODULES ACTIVE` table pointing to reference files.
+
+### Pattern B — Inline (self-contained, V.4.0+)
+All module content lives inside `SKILL.md`. Required for multi-tool compatibility
+(Cursor, OpenCode, Windsurf, Aider, etc.). No external file dependencies.
+**Reference implementation:** acc-thinker V.4.0
+
+Detect Pattern B when: skill has `compatibility:` in YAML frontmatter, or a
+`## DEPLOYMENT GUIDE` section listing multiple AI tools.
 
 ---
 

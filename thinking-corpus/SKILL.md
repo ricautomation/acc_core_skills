@@ -6,14 +6,8 @@ description: >
   how another skill thinks — not what it knows, but how it reasons, handles uncertainty,
   elicits context, avoids hallucination, or structures its output.
 
-  Trigger when the user says: "mejora esta skill", "añade mejor razonamiento a X",
-  "inyecta el corpus de pensamiento", "make this skill think better", "improve the
-  reasoning of", "add thinking modules to", or any phrase implying they want to
-  upgrade the cognitive behavior of an existing skill.
-
-  Also trigger when reviewing a skill that produces verbose, hallucinated, over-engineered,
-  or context-blind outputs — even if the user doesn't explicitly ask for thinking modules.
-  When in doubt about whether this skill applies — it does.
+  Trigger when the user says: "use thinking-corpus", "usa thinking-corpus",
+  "activate thinking-corpus", or "activa thinking-corpus".
 ---
 
 # THINKING CORPUS
@@ -78,9 +72,12 @@ the identified failure modes.
 
 Apply the selection criteria from `references/modules-index.md`.
 
-### STEP 4 — Copy Module Files
+### STEP 4 — Inject Modules
 
-Copy selected module files into the target skill's `references/` directory:
+Two patterns depending on target skill architecture:
+
+#### Pattern A — File-based (standard)
+Used when the target skill loads context via external `references/` files.
 
 ```bash
 # Example: improving acc-typescript-engineer
@@ -94,7 +91,27 @@ cp /path/to/thinking-corpus/references/reasoning-causal-chain.md \
    /path/to/acc-typescript-engineer/references/
 ```
 
-### STEP 5 — Inject the Activation Block
+Then add the activation block to the target SKILL.md (see STEP 5A).
+
+#### Pattern B — Inline (self-contained, acc-thinker V.4.0+)
+Used when the target skill has **no external file dependencies** — all module
+content must live inside SKILL.md itself.
+
+Detect this pattern when: the skill has a `## DEPLOYMENT GUIDE` or the YAML
+frontmatter includes a `compatibility:` field listing multiple AI tools.
+
+Procedure:
+1. **Do not copy files** — external references won't resolve in non-Claude tools.
+2. For each selected module, read its content from `references/` in this corpus.
+3. Inline the full module body directly into the target SKILL.md under a
+   `### MODULE: [name]` heading inside LAYER I or LAYER II as appropriate.
+4. **Sync check:** Compare the inlined module content against the corpus version.
+   If they diverge, replace with the corpus version (corpus is the source of truth).
+
+The reference implementation of Pattern B is **acc-thinker V.4.0** —
+inspect `/tmp/acc-thinker/SKILL.md` to see the expected inlining structure.
+
+### STEP 5A — Activation Block (Pattern A only)
 
 Add the following block to the target SKILL.md, immediately after the YAML
 frontmatter and before the first section heading:
@@ -113,7 +130,12 @@ frontmatter and before the first section heading:
 
 Adapt the table to the actual modules injected.
 
+> **Pattern B skills skip this step** — modules are activated by their inline
+> `### MODULE:` headings, not by a reference table.
+
 ### STEP 6 — Produce Diagnosis Report
+
+> Applies to both Pattern A and Pattern B.
 
 Present to the user:
 
